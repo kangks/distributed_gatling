@@ -44,16 +44,13 @@ export class DistributedECSTaskStack extends cdk.Stack {
         taskDefinition: taskDef,
         logging: logging,
         image: ecs.ContainerImage.fromAsset(path.resolve(__dirname, '../../gatling'), {file: "Dockerfile"}),
-        command: [ "gatling.sh", "-sf /tests/test -s perfTest.simulations.WebServiceSimulation" ],
+        command: [ "gatling.sh", "-sf", "/tests/test", "-s", "perfTest.simulations.WebServiceSimulation" ],
         environment: {
-          "GATLING_CONF": "/tests/test/resources"
-        } 
+          "GATLING_CONF": "/tests/test/resources",
+          "JAVA_OPTS": "-Dweb.baseUrl=http://simpl-simpl-1tvem419lsgf7-18442615.us-west-1.elb.amazonaws.com"
+        },
+        workingDirectory: "/tests/test"
       })
-  
-      // containerDef.addPortMappings({
-      //   containerPort: 80,
-      //   protocol: ecs.Protocol.TCP
-      // });    
   
       const service = new ecs.FargateService(this, 
         "gatlingTask", 
