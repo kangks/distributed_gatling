@@ -2,7 +2,7 @@ import ecs = require('@aws-cdk/aws-ecs');
 import ec2 = require('@aws-cdk/aws-ec2');
 import iam = require("@aws-cdk/aws-iam");
 import cdk = require('@aws-cdk/core');
-// import { ApplicationLoadBalancedFargateService } from "@aws-cdk/aws-ecs-patterns";
+import log = require('@aws-cdk/aws-logs');
 import path = require('path');
 
 export class DistributedECSTaskStack extends cdk.Stack {
@@ -31,6 +31,11 @@ export class DistributedECSTaskStack extends cdk.Stack {
   
       const logging = new ecs.AwsLogDriver({
         streamPrefix: "gatling",
+        logGroup: new log.LogGroup(this, 'gatlingLogGroup', {
+          logGroupName: 'perfTest',
+          retention: log.RetentionDays.ONE_DAY,
+          removalPolicy: cdk.RemovalPolicy.DESTROY
+        })
       })    
 
       const taskDef = new ecs.FargateTaskDefinition(this, "TaskDefinition", {
