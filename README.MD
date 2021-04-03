@@ -1,6 +1,6 @@
 # Site Reliability using AWS Fargate with CDK and Gatling
 
-This repository conists of the `cdk` stacks that build the Docker image from the `gatling` folder, push to `ECR` and provision the infrastructure.
+This repository conists of the `cdk` stacks that build the Docker image from the `gatling` folder, push to `ECR` and provision the infrastructure. Details can be found in [Site Reliability using AWS Fargate with CDK and Gatling](https://richard-kang.medium.com/site-reliability-using-aws-fargate-with-cdk-and-gatling-18d340a43588)
 
 ## CDK application
 
@@ -17,3 +17,4 @@ The application consists of 2 stacks, `DistributedECSTaskStack` and `SimpleFarga
 Another stack, `SimpleFargateWebService` is an example of `system-under-test` (SUT) that the `Gatling` will test against. The stack uses Docker image `amazon/amazon-ecs-sample` which is a simple PHP web application.
 
 ![SimpleFargateWebService architecture diagram](images/Gatling%20Fargate%20-%20simple%20web.png)
+
