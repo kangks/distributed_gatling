@@ -4,11 +4,33 @@ import iam = require("@aws-cdk/aws-iam");
 import cdk = require('@aws-cdk/core');
 import log = require('@aws-cdk/aws-logs');
 import path = require('path');
+import { CfnParameter } from '@aws-cdk/core';
 
 export class DistributedECSTaskStack extends cdk.Stack {
     constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
       super(scope, id, props);
-  
+
+      const webBaseUrl = new CfnParameter(this, "webBaseUrl", 
+        {
+          type: "String",
+          description: "The URL of the web service to be tested",
+          default: "http://localhost"
+        });
+    
+      const loadRps = new CfnParameter(this, "loadRps", 
+        {
+          type: "String",
+          description: "The concurrent requests per second",
+          default: "1"
+        });
+
+      const loadDurationInSeconds = new CfnParameter(this, "loadDurationInSeconds", 
+        {
+          type: "String",
+          description: "The duration of the load in seconds",
+          default: "1"
+        });
+
       const cluster = new ecs.Cluster(this, "gatlingCluster")
 
       const executionRole = new iam.Role(this, "TaskExecutionRole", {
@@ -52,7 +74,10 @@ export class DistributedECSTaskStack extends cdk.Stack {
         command: [ "gatling.sh", "-sf", "/tests/test", "-s", "perfTest.simulations.WebServiceSimulation" ],
         environment: {
           "GATLING_CONF": "/tests/test/resources",
-          "JAVA_OPTS": "-Dweb.baseUrl=http://simpl-simpl-1tvem419lsgf7-18442615.us-west-1.elb.amazonaws.com"
+          "JAVA_OPTS": 
+            "-Dweb.baseUrl=" + webBaseUrl.valueAsString + " " +
+            "-Dload.rps=" + loadRps.valueAsString + " " +
+            "-Dload.durationInSeconds=" + loadDurationInSeconds.valueAsString
         },
         workingDirectory: "/tests/test"
       })
